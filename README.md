@@ -5,19 +5,17 @@ Clothing Classification with Capsule Network
 ## Project Details
 Keras (Backend: TF) implementation of FashionCapsNet
 
-Submitted to [Turkish Journal of Electrical Engineering & Computer Sciences](https://journals.tubitak.gov.tr/elektrik/index.htm)
+Submitted to [Turkish Journal of Electrical Engineering & Computer Sciences](https://journals.tubitak.gov.tr/elektrik/index.htm).
 Paper will be released soon!
 
 Reference:
 [Sara Sabour, Nicholas Frosst, Geoffrey E Hinton. Dynamic Routing Between Capsules. NIPS 2017](https://arxiv.org/abs/1710.09829)
 
-Base code for capsule architecture:
+Base code for Capsule architecture:
 [XifengGuo](https://github.com/XifengGuo/CapsNet-Keras)
 
 Dataset: [DeepFashion](http://mmlab.ie.cuhk.edu.hk/projects/DeepFashion.html) 
-290K training, 40K validation and 40K test images with 46 fine-grained category labels for clothing images
-
-Sample images:
+contains 290K training, 40K validation and 40K test images with 46 fine-grained category labels for clothing images
 ![](imgs/deepfashion.jpg)
 
 ## Contacts
