@@ -1,5 +1,5 @@
 # FashionCapsNet
-Clothing Classification with Capsule Network
+Clothing Classification with Capsule Networks
 ![](imgs/model.png)
 
 ## Project Details
