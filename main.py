@@ -1,7 +1,7 @@
 """
 Author: Furkan Kınlı
 Version: 2.0
-E-mail: furkan.kinli@ozu.edu.tr
+E-mail: furkan.kinli@ozyegin.edu.tr
 
 Base code for capsule architecture:
 XifengGuo - Github: https://github.com/XifengGuo/CapsNet-Keras
