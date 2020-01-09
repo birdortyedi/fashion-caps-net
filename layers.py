@@ -94,7 +94,7 @@ class FashionCaps(layers.Layer):
             print(K.int_shape(c))
             print("hat_inputs:")
             print(K.int_shape(hat_inputs))
-            o = K.batch_dot(c, hat_inputs, [2, 2])
+            o = tf.keras.backend.batch_dot(c, hat_inputs, [2, 2])
             print("o:")
             print(K.int_shape(o))
             o = self.activation(o)
