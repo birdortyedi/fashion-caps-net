@@ -44,51 +44,63 @@ def PrimaryCaps(inputs, dim_capsule, n_channels=32, kernel_size=9, strides=2, pa
 
 
 class FashionCaps(layers.Layer):
-    def __init__(self, num_capsule, dim_capsule, routings=3, kernel_initializer='glorot_uniform', **kwargs):
+    def __init__(self, num_capsule, dim_capsule, routings=3,
+                 share_weights=True, activation='squash', kernel_initializer='glorot_uniform', **kwargs):
+        super(FashionCaps, self).__init__(**kwargs)
         self.num_capsule = num_capsule
         self.dim_capsule = dim_capsule
         self.routings = routings
+        self.share_weights = share_weights
         self.kernel_initializer = initializers.get(kernel_initializer)
-        super(FashionCaps, self).__init__(**kwargs)
+        if activation == 'squash':
+            self.activation = squash
+        else:
+            self.activation = activations.get(activation)
 
     def build(self, input_shape):
         assert len(input_shape) >= 3
-        self.input_num_capsule = input_shape[1]
-        self.input_dim_capsule = input_shape[2]
-
-        # Transform matrix
-        self.W = self.add_weight(shape=[self.num_capsule, self.input_num_capsule,
-                                        self.dim_capsule, self.input_dim_capsule],
-                                 initializer=self.kernel_initializer,
-                                 name='W')
-        self.built = True
+        input_num_capsule = input_shape[1]
+        input_dim_capsule = input_shape[2]
+        if self.share_weights:
+            self.kernel = self.add_weight(name='capsule_kernel',
+                                          shape=(1, input_dim_capsule, self.num_capsule * self.dim_capsule),
+                                          initializer=self.kernel_initializer,
+                                          trainable=True)
+        else:
+            self.kernel = self.add_weight(name='capsule_kernel',
+                                          shape=(input_num_capsule, input_dim_capsule,
+                                                 self.num_capsule * self.dim_capsule),
+                                          initializer=self.kernel_initializer,
+                                          trainable=True)
 
     def call(self, inputs, training=None):
-        inputs = K.expand_dims(inputs, 1)
-        inputs = K.tile(inputs, [1, self.num_capsule, 1, 1])
-        inputs = K.map_fn(lambda x: K.batch_dot(x, self.W, [2, 3]), elems=inputs)
+        if self.share_weights:
+            hat_inputs = K.conv1d(inputs, self.kernel)
+        else:
+            hat_inputs = K.local_conv1d(inputs, self.kernel, [1], [1])
 
-        # Dynamic routing
-        b = tf.zeros(shape=[K.shape(inputs)[0], self.num_capsule, self.input_num_capsule])
+        batch_size = K.shape(inputs)[0]
+        input_num_capsule = K.shape(inputs)[1]
+        hat_inputs = K.reshape(hat_inputs,
+                               (batch_size, input_num_capsule, self.num_capsule, self.dim_capsule))
+        hat_inputs = K.permute_dimensions(hat_inputs, (0, 2, 1, 3))
 
-        assert self.routings > 0
+        b = K.zeros_like(hat_inputs[:, :, :, 0])
         for i in range(self.routings):
-            outputs = squash(K.batch_dot(tf.nn.softmax(b, dim=1), inputs, [2, 2]))
-
+            c = tf.nn.softmax(b, dim=1)
+            o = self.activation(K.batch_dot(c, hat_inputs, [2, 2]))
             if i < self.routings - 1:
-                b += K.batch_dot(outputs, inputs, [2, 3])
+                b = K.batch_dot(o, hat_inputs, [2, 3])
 
-        return outputs
+        return o
 
     def compute_output_shape(self, input_shape):
         return tuple([None, self.num_capsule, self.dim_capsule])
 
     def get_config(self):
-        config = {
-            'num_capsule': self.num_capsule,
-            'dim_capsule': self.dim_capsule,
-            'routings': self.routings
-        }
+        config = {'num_capsule': self.num_capsule,
+                  'dim_capsule': self.dim_capsule,
+                  'routings': self.routings}
         base_config = super(FashionCaps, self).get_config()
         new_config = list(base_config.items()) + list(config.items())
         return dict(new_config)
