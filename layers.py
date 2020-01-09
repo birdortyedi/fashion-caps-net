@@ -84,15 +84,15 @@ class FashionCaps(layers.Layer):
         hat_inputs = K.reshape(hat_inputs,
                                (batch_size, input_num_capsule, self.num_capsule, self.dim_capsule))
         hat_inputs = K.permute_dimensions(hat_inputs, (0, 2, 1, 3))
-        print(K.shape(hat_inputs))
+        print(K.int_shape(hat_inputs))
 
         b = K.zeros_like(hat_inputs[:, :, :, 0])
-        print(K.shape(b))
+        print(K.int_shape(b))
         for i in range(self.routings):
             c = tf.nn.softmax(b, dim=1)
-            print(K.shape(c))
+            print(K.int_shape(c))
             o = self.activation(K.batch_dot(c, hat_inputs, [2, 2]))
-            print(K.shape(o))
+            print(K.int_shape(o))
             if i < self.routings - 1:
                 b = K.batch_dot(hat_inputs, o, [2, 3])
 
