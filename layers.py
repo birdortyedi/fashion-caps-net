@@ -45,7 +45,7 @@ def PrimaryCaps(inputs, dim_capsule, n_channels=32, kernel_size=9, strides=2, pa
 
 class FashionCaps(layers.Layer):
     def __init__(self, num_capsule, dim_capsule, routings=3,
-                 share_weights=True, activation='squash', kernel_initializer='glorot_uniform', **kwargs):
+                 share_weights=False, activation='squash', kernel_initializer='glorot_uniform', **kwargs):
         super(FashionCaps, self).__init__(**kwargs)
         self.num_capsule = num_capsule
         self.dim_capsule = dim_capsule
