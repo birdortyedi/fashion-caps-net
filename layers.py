@@ -101,7 +101,7 @@ class FashionCaps(layers.Layer):
             print("o:")
             print(K.int_shape(o))
             if i < self.routings - 1:
-                b += K.batch_dot(o, hat_inputs, [2, 3])
+                b += tf.keras.backend.batch_dot(o, hat_inputs, [2, 3])
 
         return o
 
