@@ -86,9 +86,8 @@ def margin_loss(y_true, y_pred):
 
 
 def squash(activations, axis=-1):
-    scale = K.sum(K.square(activations), axis, keepdims=True) / \
-            (1 + K.sum(K.square(activations), axis, keepdims=True)) / \
-            K.sqrt(K.sum(K.square(activations), axis, keepdims=True) + K.epsilon())
+    s_squared_norm = K.sum(K.square(activations), axis, keepdims=True)
+    scale = s_squared_norm / (1 + s_squared_norm) / K.sqrt(s_squared_norm + K.epsilon())
     return scale * activations
 
 
