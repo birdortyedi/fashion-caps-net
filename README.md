@@ -5,7 +5,7 @@ Clothing Classification with Capsule Networks
 ## Project Details
 Keras (Backend: TF) implementation of FashionCapsNet
 
-Submitted to [Turkish Journal of Electrical Engineering & Computer Sciences](https://journals.tubitak.gov.tr/elektrik/index.htm).
+Accepted to [International Journal of Informatics Technologies](https://dergipark.org.tr/en/pub/gazibtd).
 Paper will be released soon!
 
 Reference:
